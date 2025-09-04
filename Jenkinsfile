@@ -6,7 +6,7 @@ pipeline {
         IMAGE_NAME = "indie-gems"
         IMAGE_TAG  = "latest"
         CONTAINER_NAME = "indie-gems-container"
-        PORT = "3000"   // External port for app
+        PORT = "50008j"   // External port for app
     }
 
     stages {
