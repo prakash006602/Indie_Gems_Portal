@@ -6,14 +6,14 @@ pipeline {
         IMAGE_NAME = "indie-gems"
         IMAGE_TAG  = "latest"
         CONTAINER_NAME = "indie-gems-container"
-        PORT = "50008"   // External port for app
+        PORT = "8888"   // External port for app
     }
 
     stages {
         stage('Checkout Code') {
             steps {
                 dir("${WORK_DIR}") {
-                    git branch: 'main', url: 'https://github.com/SukeshKaicharla/Indie_Gems_Portal.git'
+                    git branch: 'main', url: 'https://github.com/prakash006602/Indie_Gems_Portal.git'
                 }
             }
         }
@@ -38,12 +38,6 @@ pipeline {
                     '''
                 }
             }
-        }
-    }
-
-    post {
-        always {
-            echo "Pipeline finished! Check http://13.204.85.107:3000"
         }
     }
 }
