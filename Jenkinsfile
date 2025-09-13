@@ -6,7 +6,7 @@ pipeline {
         IMAGE_NAME = "indie-gems"
         IMAGE_TAG  = "latest"
         CONTAINER_NAME = "indie-gems-container"
-        PORT = "8888"   // External port for app
+        PORT = "8888"
     }
 
     stages {
@@ -24,6 +24,19 @@ pipeline {
                     sh '''
                         docker rmi -f ${IMAGE_NAME}:${IMAGE_TAG} || true
                         docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -f ${WORK_DIR}/Dockerfile ${WORK_DIR}
+                    '''
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'moses', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker tag mytomcat $DOCKER_USER/mytomcat:latest
+                        docker push $DOCKER_USER/mytomcat:latest
+                        docker logout
                     '''
                 }
             }
