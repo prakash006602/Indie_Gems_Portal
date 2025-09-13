@@ -7,6 +7,7 @@ pipeline {
         IMAGE_TAG  = "latest"
         CONTAINER_NAME = "indie-gems-container"
         PORT = "8888"   // External port for app
+        DOCKERHUB_REPO = "moses777/indie-gems"  // your Docker Hub repo
     }
 
     stages {
@@ -29,16 +30,25 @@ pipeline {
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Docker Hub Login & Push') {
             steps {
-                dir("${WORK_DIR}") {
+                withCredentials([usernamePassword(credentialsId: 'moses', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh '''
-                        docker rm -f ${CONTAINER_NAME} || true
-                        docker run -d --name ${CONTAINER_NAME} -p ${PORT}:80 ${IMAGE_NAME}:${IMAGE_TAG}
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${DOCKERHUB_REPO}:${IMAGE_TAG}
+                        docker push ${DOCKERHUB_REPO}:${IMAGE_TAG}
                     '''
                 }
             }
         }
+
+        stage('Run Docker Container') {
+            steps {
+                sh '''
+                    docker rm -f ${CONTAINER_NAME} || true
+                    docker run -d --name ${CONTAINER_NAME} -p ${PORT}:80 ${DOCKERHUB_REPO}:${IMAGE_TAG}
+                '''
+            }
+        }
     }
 }
-
