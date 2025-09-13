@@ -34,8 +34,8 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'moses', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh '''
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker tag mytomcat $DOCKER_USER/mytomcat:latest
-                        docker push $DOCKER_USER/mytomcat:latest
+                        docker tag mytomcat $DOCKER_USER/indie-gems:latest
+                        docker push $DOCKER_USER/indie-gems:latest
                         docker logout
                     '''
                 }
